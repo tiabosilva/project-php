@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des collections{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-3">Liste des collections de voitures</h1>
+
+    <ul class="list-group">
+        {% for c in collections %}
+            <li class="list-group-item">
+                <a href="{{ path('collection_voitures_show', { id: c.id }) }}">
+                    {{ c.description }}
+                </a>
+            </li>
+        {% else %}
+            <li class="list-group-item">Aucune collection trouvée.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

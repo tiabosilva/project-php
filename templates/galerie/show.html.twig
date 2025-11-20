@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Galerie n°{{ galerie.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Galerie n°{{ galerie.id }}</h1>
+
+    <p><strong>Description :</strong> {{ galerie.description }}</p>
+    <p><strong>Publiée :</strong> {{ galerie.publiee ? 'Oui' : 'Non' }}</p>
+
+    {% if galerie.createur %}
+        <p><strong>Créateur :</strong> {{ galerie.createur.email }}</p>
+    {% else %}
+        <p><strong>Créateur :</strong> <em>Inconnu</em></p>
+    {% endif %}
+
+    <h5>Voitures de cette galerie :</h5>
+    <ul>
+        {% for v in galerie.voitures %}
+            <li>
+                <a href="{{ path('app_voiture_show', { id: v.id, galerie: galerie.id }) }}">
+                        {{ v.marque }} {{ v.modele }} ({{ v.annee }})
+				</a>
+
+            </li>
+        {% else %}
+            <li>Aucune voiture dans cette galerie.</li>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-3">
+        <a href="{{ path('app_galerie_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+
+        {% if is_granted('ROLE_ADMIN') or app.user == galerie.createur %}
+            <a href="{{ path('app_galerie_edit', {'id': galerie.id}) }}" class="btn btn-primary">Modifier</a>
+            {{ include('galerie/_delete_form.html.twig') }}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

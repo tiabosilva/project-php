@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Voiture n°{{ voiture.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="card-title mb-4 text-center">Détails de la voiture</h1>
+
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr>
+                        <th scope="row">ID</th>
+                        <td>{{ voiture.id }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Marque</th>
+                        <td>{{ voiture.marque }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Modèle</th>
+                        <td>{{ voiture.modele }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Année</th>
+                        <td>{{ voiture.annee }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center mt-4">
+                <a href="{{ path('app_galerie_show', { 'id': galerie.id}) }}">back to galerie</a> 
+                   class="btn btn-outline-primary">
+                    ← Retour à la collection
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

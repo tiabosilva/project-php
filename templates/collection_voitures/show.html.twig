@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Collection n°{{ collection.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Collection n°{{ collection.id }}</h1>
+
+    <p><strong>Description :</strong> {{ collection.description }}</p>
+
+    <h5>Voitures de cette collection :</h5>
+    <ul>
+        {% for v in collection.voitures %}
+            <li>
+                <a href="{{ path('app_voiture_show', { id: v.id }) }}">
+                    {{ v.marque }} {{ v.modele }} ({{ v.annee }})
+                </a>
+            </li>
+        {% else %}
+            <li>Aucune voiture dans cette collection.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('collection_voitures_list') }}" class="btn btn-secondary mt-3">
+        ← Retour à la liste des collections
+    </a>
+</div>
+{% endblock %}

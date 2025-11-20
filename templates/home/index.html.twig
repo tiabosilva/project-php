@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <h1 class="mb-4">Bienvenue, {{ app.user.email }}</h1>
+
+    <!-- SECTION : COLLECTION -->
+    <div class="mb-4 p-3 bg-dark text-white rounded">
+        <h3>Votre collection de voitures</h3>
+
+        {% if collection %}
+            <a href="{{ path('collection_voitures_show', { id: collection.id }) }}"
+               class="btn btn-primary mt-2">
+                Voir votre collection →
+            </a>
+        {% else %}
+            <a href="{{ path('collection_create') }}"
+               class="btn btn-success mt-2">
+                Créer votre collection →
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- SECTION : USER GALERIES -->
+    <div class="mb-4 p-3 bg-primary text-white rounded">
+        <h3>Vos galeries</h3>
+
+        {% if user_galeries is not empty %}
+            <ul class="mt-2">
+                {% for g in user_galeries %}
+                    <li>
+                        <a class="text-white"
+                           href="{{ path('app_galerie_show', { id: g.id }) }}">
+                            {{ g.description }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Vous n'avez encore aucune galerie.</p>
+            <a href="{{ path('app_galerie_new') }}" class="btn btn-light">
+                Créer une galerie →
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- PUBLIC GALERIES REMOVED -->
+
+</div>
+
+{% endblock %}

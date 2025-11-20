@@ -1,0 +1,10 @@
+bootstrap_menu:
+  menus:
+    main:
+      items:
+        voitures:
+          label: 'Voitures'
+          route: 'app_voiture_index'
+        collections:
+          label: 'Collections'
+          route: 'collection_voitures_list'

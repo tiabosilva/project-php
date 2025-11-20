@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une galerie{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    <div class="card shadow p-4">
+        <h2 class="mb-4 text-center">Créer une nouvelle galerie</h2>
+
+        {{ include('galerie/_form.html.twig', { button_label: 'Créer la galerie' }) }}
+
+        <div class="text-center mt-3">
+            <a href="{{ path('app_galerie_index') }}" class="btn btn-secondary">
+                ← Retour à la liste
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

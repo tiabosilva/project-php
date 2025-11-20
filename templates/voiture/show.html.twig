@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ voiture.marque }} {{ voiture.modele }}
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5" style="max-width: 700px;">
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-dark text-white text-center py-4">
+            <h2 class="mb-0">
+                {{ voiture.marque }} {{ voiture.modele }}
+            </h2>
+            <small class="text-light">Année : {{ voiture.annee }}</small>
+        </div>
+
+        <div class="card-body p-4">
+
+            <table class="table table-bordered mb-4">
+                <tr>
+                    <th style="width: 200px;">ID</th>
+                    <td>{{ voiture.id }}</td>
+                </tr>
+                <tr>
+                    <th>Marque</th>
+                    <td>{{ voiture.marque }}</td>
+                </tr>
+                <tr>
+                    <th>Modèle</th>
+                    <td>{{ voiture.modele }}</td>
+                </tr>
+                <tr>
+                    <th>Année</th>
+                    <td>{{ voiture.annee }}</td>
+                </tr>
+            </table>
+
+            <div class="d-flex justify-content-between mt-4">
+
+                {# 🔥 NORMAL USER = go back to galerie #}
+                {% if app.user and not is_granted('ROLE_ADMIN') %}
+                    {% if voiture.galeries|length > 0 %}
+                        {% set g = voiture.galeries|first %}
+                        <a href="{{ path('app_galerie_show', { id: g.id }) }}"
+                           class="btn btn-outline-secondary">
+                            ← Retour à la galerie
+                        </a>
+                    {% else %}
+                        <a href="{{ path('collection_voitures_list') }}"
+                           class="btn btn-outline-secondary">
+                            ← Retour à vos collections
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                {# 🔥 ADMIN = full access #}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_voiture_index') }}"
+                       class="btn btn-outline-secondary">
+                        ← Retour à la liste
+                    </a>
+
+                    <a href="{{ path('app_voiture_edit', { id: voiture.id }) }}"
+                       class="btn btn-primary">
+                        Modifier
+                    </a>
+
+                    {{ include('voiture/_delete_form.html.twig') }}
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

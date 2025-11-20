@@ -1,0 +1,22 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}
+    Administration MyCars
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Bienvenue dans le Dashboard Admin</h1>
+
+        <p class="lead">
+            Gérez les membres, les galeries, les voitures et les collections.
+        </p>
+
+        <ul>
+            <li><a href="{{ path('admin_member_index') }}">Gestion des membres</a></li>
+            <li><a href="{{ path('admin_galerie_index') }}">Gestion des galeries</a></li>
+            <li><a href="{{ path('admin_voiture_index') }}">Gestion des voitures</a></li>
+            <li><a href="{{ path('admin_collection_voitures_index') }}">Gestion des collections</a></li>
+        </ul>
+    </div>
+{% endblock %}
