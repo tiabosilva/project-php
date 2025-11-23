@@ -3,39 +3,78 @@
 {% block title %}Galerie n°{{ galerie.id }}{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Galerie n°{{ galerie.id }}</h1>
 
-    <p><strong>Description :</strong> {{ galerie.description }}</p>
-    <p><strong>Publiée :</strong> {{ galerie.publiee ? 'Oui' : 'Non' }}</p>
+<div class="container mt-5" style="max-width: 800px;">
 
-    {% if galerie.createur %}
-        <p><strong>Créateur :</strong> {{ galerie.createur.email }}</p>
-    {% else %}
-        <p><strong>Créateur :</strong> <em>Inconnu</em></p>
-    {% endif %}
+    <div class="card shadow p-4">
+        
+        <h2 class="text-center mb-3">Galerie n°{{ galerie.id }}</h2>
 
-    <h5>Voitures de cette galerie :</h5>
-    <ul>
-        {% for v in galerie.voitures %}
-            <li>
-                <a href="{{ path('app_voiture_show', { id: v.id, galerie: galerie.id }) }}">
+        <!-- Creator -->
+        <p class="text-center text-muted">
+            Créée par :
+            <strong>
+                {{ galerie.createur.email|split('@')[0] }}
+            </strong>
+        </p>
+
+        <!-- Description -->
+        <p>
+            <strong>Description :</strong><br>
+            {{ galerie.description ?: 'Aucune description.' }}
+        </p>
+
+        <!-- Visibility -->
+        <p>
+            <strong>Visibilité :</strong>
+            {% if galerie.publiee %}
+                <span class="badge bg-success">Publique</span>
+            {% else %}
+                <span class="badge bg-secondary">Privée</span>
+            {% endif %}
+        </p>
+
+        <!-- Cars -->
+        <p><strong>Voitures :</strong></p>
+        <ul>
+            {% for v in galerie.voitures %}
+                <li>
+                    <a href="{{ path('app_voiture_show', { id: v.id }) }}">
                         {{ v.marque }} {{ v.modele }} ({{ v.annee }})
-				</a>
+                    </a>
+                </li>
+            {% else %}
+                <p class="text-muted">Aucune voiture dans cette galerie.</p>
+            {% endfor %}
+        </ul>
 
-            </li>
-        {% else %}
-            <li>Aucune voiture dans cette galerie.</li>
-        {% endfor %}
-    </ul>
+        <!-- Buttons -->
+        <div class="mt-4">
 
-    <div class="mt-3">
-        <a href="{{ path('app_galerie_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+            <a href="{{ path('app_galerie_index') }}" class="btn btn-secondary">
+                ← Retour
+            </a>
 
-        {% if is_granted('ROLE_ADMIN') or app.user == galerie.createur %}
-            <a href="{{ path('app_galerie_edit', {'id': galerie.id}) }}" class="btn btn-primary">Modifier</a>
-            {{ include('galerie/_delete_form.html.twig') }}
-        {% endif %}
+            {% if app.user and (is_granted('ROLE_ADMIN') or app.user == galerie.createur) %}
+                <a href="{{ path('app_galerie_edit', {id: galerie.id}) }}"
+                   class="btn btn-warning ms-2">
+                    Modifier
+                </a>
+
+                <form method="post"
+                      action="{{ path('app_galerie_delete', {id: galerie.id}) }}"
+                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette galerie ?');"
+                      class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ galerie.id) }}">
+                    <button class="btn btn-danger ms-2">
+                        Supprimer
+                    </button>
+                </form>
+            {% endif %}
+
+        </div>
+
     </div>
 </div>
+
 {% endblock %}

@@ -4,51 +4,80 @@
 
 {% block body %}
 
-<div class="container mt-4">
+<div class="container mt-5">
 
-    <h1 class="mb-4">Bienvenue, {{ app.user.email }}</h1>
+    <h1 class="mb-4">Bienvenue, {{ app.user ? app.user.email|split('@')[0] : 'visiteur' }}</h1>
 
-    <!-- SECTION : COLLECTION -->
-    <div class="mb-4 p-3 bg-dark text-white rounded">
-        <h3>Votre collection de voitures</h3>
 
-        {% if collection %}
-            <a href="{{ path('collection_voitures_show', { id: collection.id }) }}"
+    {% if is_granted('ROLE_ADMIN') %}
+
+        <!-- =============================== -->
+        <!--        ADMIN DASHBOARD          -->
+        <!-- =============================== -->
+
+        <div class="card bg-dark text-white p-4 mb-4">
+            <h3>Gestion des collections</h3>
+            <p>Consultez et gérez toutes les collections existantes.</p>
+
+            <a href="/admin?crudAction=index&crudControllerFqcn=App\\Controller\\Admin\\CollectionVoituresCrudController"
                class="btn btn-primary mt-2">
-                Voir votre collection →
+                Voir toutes les collections →
             </a>
-        {% else %}
-            <a href="{{ path('collection_create') }}"
-               class="btn btn-success mt-2">
-                Créer votre collection →
+        </div>
+
+
+        <div class="card bg-primary text-white p-4">
+            <h3>Gestion des galeries</h3>
+            <p>Consultez et administrez toutes les galeries, publiques ou privées.</p>
+
+            <a href="/admin?crudAction=index&crudControllerFqcn=App\\Controller\\Admin\\GalerieCrudController"
+               class="btn btn-light mt-2">
+                Voir toutes les galeries →
             </a>
-        {% endif %}
-    </div>
+        </div>
 
-    <!-- SECTION : USER GALERIES -->
-    <div class="mb-4 p-3 bg-primary text-white rounded">
-        <h3>Vos galeries</h3>
 
-        {% if user_galeries is not empty %}
-            <ul class="mt-2">
-                {% for g in user_galeries %}
-                    <li>
-                        <a class="text-white"
-                           href="{{ path('app_galerie_show', { id: g.id }) }}">
-                            {{ g.description }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Vous n'avez encore aucune galerie.</p>
-            <a href="{{ path('app_galerie_new') }}" class="btn btn-light">
-                Créer une galerie →
-            </a>
-        {% endif %}
-    </div>
+    {% else %}
 
-    <!-- PUBLIC GALERIES REMOVED -->
+        <!-- =============================== -->
+        <!--        NORMAL USER DASHBOARD    -->
+        <!-- =============================== -->
+
+        <div class="card bg-dark text-white p-4 mb-4">
+            <h3>Votre collection de voitures</h3>
+
+            {% if app.user and app.user.collectionVoitures %}
+                <a href="{{ path('collection_voitures_show', {id: app.user.collectionVoitures.id}) }}"
+                   class="btn btn-success mt-2">
+                    Voir votre collection →
+                </a>
+            {% else %}
+                <a href="{{ path('collection_voitures_new') }}"
+                   class="btn btn-success mt-2">
+                    Créer votre collection →
+                </a>
+            {% endif %}
+        </div>
+
+
+        <div class="card bg-primary text-white p-4">
+            <h3>Vos galeries</h3>
+
+            {% if app.user and app.user.galeries|length > 0 %}
+                <a href="{{ path('app_galerie_mine') }}"
+                   class="btn btn-light mt-2">
+                    Voir vos galeries →
+                </a>
+            {% else %}
+                <p>Vous n'avez encore aucune galerie.</p>
+                <a href="{{ path('app_galerie_new') }}"
+                   class="btn btn-light mt-2">
+                    Créer une galerie →
+                </a>
+            {% endif %}
+        </div>
+
+    {% endif %}
 
 </div>
 

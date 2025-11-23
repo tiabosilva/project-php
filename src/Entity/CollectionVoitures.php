@@ -27,7 +27,7 @@ class CollectionVoitures
     #[ORM\OneToOne(mappedBy: 'collectionVoitures', cascade: ['persist', 'remove'])]
     private ?Member $member = null;
     
-    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'collectionvoitures')]
+    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'collectionVoitures')]
     private Collection $voitures;
     
     public function __construct()
@@ -81,6 +81,11 @@ class CollectionVoitures
     public function setMember(?Member $member): static
     {
         $this->member = $member;
+        
+        if ($member && $member->getCollectionVoitures() !== $this) {
+            $member->setCollectionVoitures($this);
+        }
+        
         return $this;
     }
     
@@ -92,4 +97,3 @@ class CollectionVoitures
         return $this->voitures;
     }
 }
-s

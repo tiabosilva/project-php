@@ -103,8 +103,14 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCollectionVoitures(?CollectionVoitures $collectionVoitures): static
     {
         $this->collectionVoitures = $collectionVoitures;
+        
+        if ($collectionVoitures && $collectionVoitures->getMember() !== $this) {
+            $collectionVoitures->setMember($this);
+        }
+        
         return $this;
     }
+    
     
     /**
      * @return Collection<int, Galerie>

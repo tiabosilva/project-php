@@ -2,34 +2,46 @@
 
 namespace App\Form;
 
-use App\Entity\CollectionVoitures;
-use App\Entity\Galerie;
 use App\Entity\Voiture;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class VoitureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('modele')
-            ->add('marque')
-            ->add('annee')
-            ->add('collectionVoitures', EntityType::class, [
-                'class' => CollectionVoitures::class,
-                'choice_label' => 'id',
-            ])
-            ->add('galeries', EntityType::class, [
-                'class' => Galerie::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-            ])
-        ;
+        ->add('marque', TextType::class, [
+            'label' => 'Marque',
+            'attr' => ['class' => 'form-control mb-3']
+        ])
+        ->add('modele', TextType::class, [
+            'label' => 'Modèle',
+            'attr' => ['class' => 'form-control mb-3']
+        ])
+        ->add('annee', TextType::class, [
+            'label' => 'Année',
+            'attr' => ['class' => 'form-control mb-3']
+        ])
+        ->add('imageFile', FileType::class, [
+            'label' => 'Photo de la voiture (JPEG/PNG)',
+            'mapped' => false,
+            'required' => false,
+            'attr' => ['class' => 'form-control mb-3'],
+            'constraints' => [
+                new File([
+                    'maxSize' => '5M',
+                    'mimeTypes' => ['image/jpeg', 'image/png'],
+                    'mimeTypesMessage' => 'Veuillez uploader une image JPEG ou PNG.',
+                ])
+            ],
+        ]);
     }
-
+    
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

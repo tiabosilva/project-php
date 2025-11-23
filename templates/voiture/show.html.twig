@@ -1,26 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-    {{ voiture.marque }} {{ voiture.modele }}
-{% endblock %}
+{% block title %}{{ voiture.marque }} {{ voiture.modele }}{% endblock %}
 
 {% block body %}
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow-lg" style="max-width: 650px; width: 100%;">
 
-<div class="container mt-5" style="max-width: 700px;">
-    <div class="card shadow-lg border-0">
+        {# IMAGE HEADER #}
+        {% if voiture.image %}
+            <img src="{{ asset('uploads/cars/' ~ voiture.image) }}" 
+                 alt="Photo de {{ voiture.marque }} {{ voiture.modele }}" 
+                 class="card-img-top"
+                 style="max-height: 350px; object-fit: cover;">
+        {% else %}
+            <div class="bg-secondary text-white text-center p-5">
+                <span style="font-size: 2rem;">📷</span>
+                <p>Pas d'image disponible</p>
+            </div>
+        {% endif %}
 
-        <div class="card-header bg-dark text-white text-center py-4">
-            <h2 class="mb-0">
+        <div class="card-body text-center">
+            <h2 class="card-title fw-bold">
                 {{ voiture.marque }} {{ voiture.modele }}
             </h2>
-            <small class="text-light">Année : {{ voiture.annee }}</small>
-        </div>
+            <h6 class="text-muted">Année : {{ voiture.annee }}</h6>
 
-        <div class="card-body p-4">
-
-            <table class="table table-bordered mb-4">
+            <table class="table mt-4">
                 <tr>
-                    <th style="width: 200px;">ID</th>
+                    <th>ID</th>
                     <td>{{ voiture.id }}</td>
                 </tr>
                 <tr>
@@ -37,43 +44,39 @@
                 </tr>
             </table>
 
-            <div class="d-flex justify-content-between mt-4">
+            {# Determine if the current voiture belongs to the logged-in user #}
+{% set isMine = app.user and voiture.collectionVoitures == app.user.collectionVoitures %}
 
-                {# 🔥 NORMAL USER = go back to galerie #}
-                {% if app.user and not is_granted('ROLE_ADMIN') %}
-                    {% if voiture.galeries|length > 0 %}
-                        {% set g = voiture.galeries|first %}
-                        <a href="{{ path('app_galerie_show', { id: g.id }) }}"
-                           class="btn btn-outline-secondary">
-                            ← Retour à la galerie
-                        </a>
-                    {% else %}
-                        <a href="{{ path('collection_voitures_list') }}"
-                           class="btn btn-outline-secondary">
-                            ← Retour à vos collections
-                        </a>
-                    {% endif %}
-                {% endif %}
+<div class="text-center mt-4">
 
-                {# 🔥 ADMIN = full access #}
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_voiture_index') }}"
-                       class="btn btn-outline-secondary">
-                        ← Retour à la liste
-                    </a>
+    {% if isMine %}
+        <a href="{{ path('collection_voitures_list') }}" class="btn btn-outline-secondary">
+            ← Retour à ma collection
+        </a>
+    {% else %}
+        {# Find gallery that contains this voiture (public galleries only) #}
+        {% set gallery = null %}
+        {% for g in voiture.galeries %}
+            {% if g.publiee %}
+                {% set gallery = g %}
+            {% endif %}
+        {% endfor %}
 
-                    <a href="{{ path('app_voiture_edit', { id: voiture.id }) }}"
-                       class="btn btn-primary">
-                        Modifier
-                    </a>
+        {% if gallery %}
+            <a href="{{ path('app_galerie_show', {id: gallery.id}) }}"
+               class="btn btn-outline-secondary">
+                ← Retour à la galerie
+            </a>
+        {% else %}
+            <a href="{{ path('app_galerie_public') }}" class="btn btn-outline-secondary">
+                ← Retour
+            </a>
+        {% endif %}
+    {% endif %}
 
-                    {{ include('voiture/_delete_form.html.twig') }}
-                {% endif %}
-
-            </div>
-
+</div>
+            
         </div>
     </div>
 </div>
-
 {% endblock %}

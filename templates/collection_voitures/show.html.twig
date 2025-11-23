@@ -6,7 +6,13 @@
 <div class="container mt-4">
     <h1>Collection n°{{ collection.id }}</h1>
 
+    <p><strong>Nom :</strong> {{ collection.name }}</p>
     <p><strong>Description :</strong> {{ collection.description }}</p>
+    <p><strong>Année de création :</strong> {{ collection.yearCreated }}</p>
+
+    <a href="{{ path('voiture_new_for_collection', { id: collection.id }) }}" class="btn btn-success mb-3">
+        + Ajouter une voiture
+    </a>
 
     <h5>Voitures de cette collection :</h5>
     <ul>
@@ -22,7 +28,7 @@
     </ul>
 
     <a href="{{ path('collection_voitures_list') }}" class="btn btn-secondary mt-3">
-        ← Retour à la liste des collections
+        ← Retour à Votre collection
     </a>
 </div>
 {% endblock %}

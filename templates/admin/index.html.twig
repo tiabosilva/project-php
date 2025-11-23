@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    <h1 class="mb-4">
+        Bienvenue, {{ app.user.email }}
+    </h1>
+
+    <!-- SECTION COLLECTIONS -->
+    <div class="p-4 mb-4 rounded" style="background:#1e1e1e; color:white;">
+        <h3>Toutes les collections</h3>
+
+        {% if collections is empty %}
+            <p>Aucune collection trouvée.</p>
+        {% else %}
+            <ul>
+                {% for c in collections %}
+                    <li>
+                        <strong>{{ c.name }}</strong> — créée en {{ c.yearCreated }}
+                        <a href="{{ path('collection_voitures_show', {id: c.id}) }}" class="btn btn-sm btn-outline-light ms-2">Voir</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <!-- SECTION GALERIES -->
+    <div class="p-4 rounded" style="background:#0d6efd; color:white;">
+        <h3>Toutes les galeries</h3>
+
+        {% if galeries is empty %}
+            <p>Aucune galerie trouvée.</p>
+        {% else %}
+            <ul>
+                {% for g in galeries %}
+                    <li>
+                        <strong>Galerie n°{{ g.id }}</strong> — {{ g.description }}
+                        (créée par : {{ g.createur.email|split('@')[0] ?? 'inconnu' }})
+
+                        <a href="{{ path('app_galerie_show', {id: g.id}) }}" class="btn btn-sm btn-outline-light ms-2">Voir</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

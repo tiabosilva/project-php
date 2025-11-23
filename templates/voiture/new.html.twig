@@ -1,11 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Voiture{% endblock %}
+{% block title %}Ajouter une voiture{% endblock %}
 
 {% block body %}
-    <h1>Create new Voiture</h1>
+<div class="container mt-5" style="max-width: 700px;">
 
-    {{ include('voiture/_form.html.twig') }}
+    <h1 class="mb-4 text-center">
+        🚗 Ajouter une voiture à la collection n°{{ collection.id }}
+    </h1>
 
-    <a href="{{ path('app_voiture_index') }}">back to list</a>
+    <div class="card shadow-sm p-4">
+
+        {{ form_start(form) }}
+
+        {{ form_row(form.marque) }}
+        {{ form_row(form.modele) }}
+        {{ form_row(form.annee) }}
+        {{ form_row(form.imageFile) }}
+
+        <button type="submit" class="btn btn-primary w-100">
+            ✔️ Enregistrer la voiture
+        </button>
+
+        {{ form_end(form) }}
+    </div>
+
+    <a href="{{ path('collection_voitures_show', { id: collection.id }) }}"
+       class="btn btn-secondary mt-4 w-100">
+        ← Retour à la collection
+    </a>
+
+</div>
 {% endblock %}

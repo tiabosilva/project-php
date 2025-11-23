@@ -1,21 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer une galerie{% endblock %}
+{% block title %}Créer une nouvelle galerie{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+<div class="container mt-5" style="max-width: 800px;">
+    <h1 class="mb-4 text-center">Créer une nouvelle galerie</h1>
 
-    <div class="card shadow p-4">
-        <h2 class="mb-4 text-center">Créer une nouvelle galerie</h2>
+    <div class="card shadow-sm p-4">
 
-        {{ include('galerie/_form.html.twig', { button_label: 'Créer la galerie' }) }}
+        {{ form_start(form) }}
 
-        <div class="text-center mt-3">
-            <a href="{{ path('app_galerie_index') }}" class="btn btn-secondary">
-                ← Retour à la liste
-            </a>
+        <div class="mb-3">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
         </div>
+
+        <div class="form-check mb-4">
+            {{ form_widget(form.publiee) }}
+            {{ form_label(form.publiee, null, { 'label_attr': {'class': 'form-check-label'} }) }}
+        </div>
+
+        <h5 class="mb-2">Choisissez les voitures à ajouter :</h5>
+        <div class="mb-3">
+            {{ form_widget(form.voitures) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            ✔️ Créer la galerie
+        </button>
+
+        {{ form_end(form) }}
+
     </div>
 
+    <a href="{{ path('app_galerie_index') }}" class="btn btn-secondary mt-4 w-100">
+        ← Retour à la liste
+    </a>
 </div>
 {% endblock %}

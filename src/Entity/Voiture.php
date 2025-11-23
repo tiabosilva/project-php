@@ -33,6 +33,12 @@ class Voiture
     #[ORM\ManyToMany(targetEntity: Galerie::class, mappedBy: 'voitures')]
     private Collection $galeries;
     
+    // --------------------
+    // NEW FIELD FOR IMAGE
+    // --------------------
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+    
     public function __construct()
     {
         $this->galeries = new ArrayCollection();
@@ -101,7 +107,6 @@ class Voiture
             $this->galeries->add($galerie);
             $galerie->addVoiture($this);
         }
-        
         return $this;
     }
     
@@ -110,7 +115,20 @@ class Voiture
         if ($this->galeries->removeElement($galerie)) {
             $galerie->removeVoiture($this);
         }
-        
+        return $this;
+    }
+    
+    // ---------
+    // IMAGE
+    // ---------
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+    
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
         return $this;
     }
 }

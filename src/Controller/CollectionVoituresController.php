@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\CollectionVoitures;
+use App\Form\CollectionVoituresType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,20 +17,17 @@ class CollectionVoituresController extends AbstractController
     {
         $repo = $doctrine->getRepository(CollectionVoitures::class);
         
-        // ADMIN → sees all collections
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $collections = $repo->findAll();
+        if (!$this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('app_login');
         }
-        else {
-            // USER → sees only his collection
+        
+        if ($this->isGranted('ROLE_ADMIN')) {
+            // Admin sees all collections
+            $collections = $repo->findAll();
+        } else {
+            // Normal user sees only his own
             $user = $this->getUser();
-            
-            if (!$user || !$user->getCollectionVoitures()) {
-                // user not logged or no collection → show nothing
-                $collections = [];
-            } else {
-                $collections = [$user->getCollectionVoitures()];
-            }
+            $collections = $user->getCollectionVoitures() ? [$user->getCollectionVoitures()] : [];
         }
         
         return $this->render('collection_voitures/index.html.twig', [
@@ -36,6 +35,30 @@ class CollectionVoituresController extends AbstractController
         ]);
     }
     
+    
+    #[Route('/collection/new', name: 'collection_voitures_new')]
+    public function new(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $em = $doctrine->getManager();
+        $collection = new CollectionVoitures();
+        
+        $form = $this->createForm(CollectionVoituresType::class, $collection);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $collection->setMember($this->getUser());
+            
+            $em->persist($collection);
+            $em->flush();
+            
+            return $this->redirectToRoute('collection_voitures_list');
+        }
+        
+        return $this->render('collection_voitures/new.html.twig', [
+            'form' => $form,
+        ]);
+    }
     
     #[Route('/collection/voitures/{id}', name: 'collection_voitures_show')]
     public function show(ManagerRegistry $doctrine, int $id): Response
@@ -46,12 +69,8 @@ class CollectionVoituresController extends AbstractController
             throw $this->createNotFoundException('Collection introuvable.');
         }
         
-        // ADMIN → unlimited access
         if (!$this->isGranted('ROLE_ADMIN')) {
-            
             $user = $this->getUser();
-            
-            // USER must own the collection
             if (!$user || $user->getCollectionVoitures() !== $collection) {
                 throw $this->createAccessDeniedException(
                     "Vous ne pouvez pas accéder à cette collection."

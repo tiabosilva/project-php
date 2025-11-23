@@ -1,67 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Galeries publiques{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
+<div class="container mt-5" style="max-width: 900px;">
 
-    <h1 class="mb-4">Galeries</h1>
+    <h1 class="mb-4 text-center">{{ title }}</h1>
 
-    <div class="d-flex justify-content-between mb-3">
-        <a href="{{ path('app_galerie_new') }}" class="btn btn-primary">Créer une nouvelle galerie</a>
-    </div>
+    {% if app.user %}
+        <a href="{{ path('app_galerie_new') }}" class="btn btn-success mb-4">
+            + Créer une nouvelle galerie
+        </a>
+    {% endif %}
 
-    {% if galeries is empty %}
-        <div class="alert alert-info">
-            Aucune galerie disponible.
-        </div>
-    {% else %}
-
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-
+    <div class="row">
         {% for galerie in galeries %}
-            <div class="col">
-                <div class="card shadow-sm">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm p-3">
 
-                    <div class="card-body">
+                    <h5>Galerie n°{{ galerie.id }}</h5>
 
-                        <!-- Title -->
-                        <h5 class="card-title">{{ galerie.description }}</h5>
+                    <p>
+                        <strong>Description :</strong><br>
+                        {{ galerie.description ?: 'Aucune description' }}
+                    </p>
 
-                        <!-- Creator (NULL-safe) -->
-                        <p class="card-text small">
-                            <strong>Créée par :</strong>
-                            {% if galerie.createur %}
-                                {{ galerie.createur.email }}
-                            {% else %}
-                                <span class="text-muted">Inconnu</span>
-                            {% endif %}
-                        </p>
-
-                        <!-- Published or not -->
+                    <p>
                         {% if galerie.publiee %}
-                            <span class="badge bg-success mb-2">Publique</span>
+                            <span class="badge bg-success">Publique</span>
                         {% else %}
-                            <span class="badge bg-secondary mb-2">Privée</span>
+                            <span class="badge bg-secondary">Privée</span>
                         {% endif %}
+                    </p>
 
-                        <br>
+                    <p>
+                        <strong>Voitures :</strong><br>
+                        {% for v in galerie.voitures %}
+                            • {{ v.marque }} {{ v.modele }} ({{ v.annee }})<br>
+                        {% else %}
+                            Aucune voiture dans cette galerie.
+                        {% endfor %}
+                    </p>
 
-                        <!-- Buttons -->
-                        <a href="{{ path('app_galerie_show', {id: galerie.id}) }}" class="btn btn-outline-primary btn-sm mt-2">Voir</a>
+                    <a href="{{ path('app_galerie_show', {id: galerie.id}) }}" class="btn btn-outline-primary btn-sm mt-2">
+    					Voir
+					</a>
 
-                        {% if is_granted('ROLE_ADMIN') or app.user == galerie.createur %}
-                            <a href="{{ path('app_galerie_edit', {id: galerie.id}) }}" class="btn btn-outline-warning btn-sm mt-2">Modifier</a>
-                        {% endif %}
+                    {% if app.user and (is_granted('ROLE_ADMIN') or app.user == galerie.createur) %}
+                        <a href="{{ path('app_galerie_edit', {id: galerie.id}) }}" class="btn btn-outline-warning btn-sm mt-2 ms-2">
+                            Modifier
+                        </a>
+                    {% endif %}
+                    
 
-                    </div>
                 </div>
             </div>
+        {% else %}
+            <p class="text-center mt-4">Aucune galerie trouvée.</p>
         {% endfor %}
-
-        </div>
-
-    {% endif %}
+    </div>
 
 </div>
 {% endblock %}

@@ -41,4 +41,6 @@ class AdminDashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Galeries', 'fa fa-images', Galerie::class);
     }
     
+    
+    
 }
